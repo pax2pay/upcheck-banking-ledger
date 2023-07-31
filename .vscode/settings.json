@@ -1,7 +1,5 @@
 {
 	"files.exclude": {
-		".*": true,
-		"*.json": true,
 		"CODEOWNERS": true,
 		"dist": true,
 		"README.md": true,
