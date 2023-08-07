@@ -11,8 +11,11 @@ const client = process.env.url ? pax2pay.Client.create(process.env.url, "") : un
 client && (client.realm = "test")
 client && (client.organization = "Y2TgAgLN")
 let token: string | gracely.Error
+let accounts: pax2pay.Account[] | gracely.Error | undefined
+let target: string
+let source: string
 
-describe("pax2pay Ledger", async () => {
+describe("pax2pay Ledger", () => {
 	beforeAll(async () => {
 		const key = await client?.userwidgets.me.login({
 			user: process.env.email ?? "",
@@ -20,12 +23,12 @@ describe("pax2pay Ledger", async () => {
 		})
 		token = userwidgets.User.Key.is(key) ? key.token : gracely.client.unauthorized()
 		typeof token == "string" && client && (client.key = token)
+		accounts = await client?.accounts.list()
 	})
 	it("get token", async () => {
 		expect(typeof token == "string").toBeTruthy()
 	})
 	it("list accounts", async () => {
-		const accounts = await client?.accounts.list()
 		expect(
 			accounts &&
 				!gracely.Error.is(accounts) &&
@@ -34,33 +37,36 @@ describe("pax2pay Ledger", async () => {
 		).toBeTruthy()
 	})
 	it("create internal", async () => {
+		!gracely.Error.is(accounts) &&
+			accounts?.every(pax2pay.Account.is) &&
+			((accounts?.[0]?.balances?.USD?.actual ?? 0) > (accounts?.[1]?.balances?.USD?.actual ?? 0)
+				? (source = accounts?.[0].id && (target = accounts?.[1].id))
+				: (source = accounts?.[1].id && (target = accounts?.[0].id)))
 		const transaction: pax2pay.Transaction.Creatable = {
-			counterpart: { type: "internal", identifier: "0qbsfo2j" },
-			currency: "GBP",
+			counterpart: { type: "internal", identifier: target },
+			currency: "USD",
 			amount: 100,
 			description: "upcheck internal transaction",
 		}
-		const internal = await client?.transactions.create("lgFWzV9m", transaction)
+		const internal = await client?.transactions.create(source, transaction)
 		expect(
 			pax2pay.Transaction.is(internal) && (internal.status == "created" || internal.status == "processing")
 		).toBeTruthy()
 	})
 	it("total balance constant", async () => {
-		await new Promise(resolve => setTimeout(resolve, 31000))
-		it("list accounts", async () => {
-			const accounts = await client?.accounts.list()
-			expect(
-				accounts &&
-					!gracely.Error.is(accounts) &&
-					accounts?.every(pax2pay.Account.is) &&
-					accounts.map(
-						a =>
-							(Balances.after = Balances.add(Balances.after, Balances.getAvailable(a.balances))) &&
-							Balances.areEqual(Balances.before, Balances.after)
-					)
-			).toBeTruthy()
-		})
-	})
+		//await new Promise(resolve => setTimeout(resolve, 31000))
+		const accounts = await client?.accounts.list()
+		expect(
+			accounts &&
+				!gracely.Error.is(accounts) &&
+				accounts?.every(pax2pay.Account.is) &&
+				accounts.map(
+					a =>
+						(Balances.after = Balances.add(Balances.after, Balances.getAvailable(a.balances))) &&
+						Balances.areEqual(Balances.before, Balances.after)
+				)
+		).toBeTruthy()
+	}) // 60000
 })
 
 namespace Balances {
@@ -96,7 +102,7 @@ namespace Balances {
 	): Partial<Record<isoly.Currency, number>> {
 		const result: Partial<Record<isoly.Currency, number>> = {}
 		for (const currency of isoly.Currency.types)
-			result[currency] = (balance1[currency] ?? 0) + (balance2[currency] ?? 0)
+			result[currency] = isoly.Currency.add(currency, balance1[currency] ?? 0, balance2[currency] ?? 0)
 		return result
 	}
 	export function areEqual(
