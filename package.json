@@ -56,18 +56,22 @@
 		"@types/jest": "^29.5.0",
 		"@typescript-eslint/eslint-plugin": "5.60.1",
 		"@typescript-eslint/parser": "5.60.1",
+		"@userwidgets/model": "^0.4.6",
 		"dotenv": "^16.0.3",
-		"isomorphic-fetch": "3.0.0",
 		"eslint": "^8.43.0",
 		"eslint-plugin-prettierx": "github:utily/eslint-plugin-prettierx#utily-20221229",
 		"eslint-plugin-simple-import-sort": "^10.0.0",
+		"isomorphic-fetch": "3.0.0",
 		"jest": "^29.5.0",
 		"prettierx": "github:utily/prettierx#utily-20221229",
 		"rimraf": "^4.4.1",
 		"ts-jest": "^29.1.0",
 		"typescript": "^5.0.3"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"gracely": "^2.0.4",
+		"isoly": "^2.0.23"
+	},
 	"overrides": {
 		"semver": "7.5.3",
 		"optionator": "0.9.3"
