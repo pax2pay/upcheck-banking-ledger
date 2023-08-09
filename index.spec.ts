@@ -11,7 +11,7 @@ const client = process.env.url ? pax2pay.Client.create(process.env.url, "") : un
 client && (client.realm = "test")
 client && (client.organization = "Y2TgAgLN")
 let token: string | gracely.Error
-let accounts: pax2pay.Account[] | gracely.Error | undefined
+let accounts: pax2pay.Account[] | undefined
 let target: string
 let source: string
 
@@ -23,7 +23,7 @@ describe("pax2pay Ledger", () => {
 		})
 		token = userwidgets.User.Key.is(key) ? key.token : gracely.client.unauthorized()
 		typeof token == "string" && client && (client.key = token)
-		accounts = await client?.accounts.list()
+		accounts = await client?.accounts.list().then(r => (gracely.Error.is(r) || r.length < 2 ? undefined : r))
 	})
 	it("get token", async () => {
 		expect(typeof token == "string").toBeTruthy()
@@ -37,11 +37,11 @@ describe("pax2pay Ledger", () => {
 		).toBeTruthy()
 	})
 	it("create internal", async () => {
-		!gracely.Error.is(accounts) &&
-			accounts?.every(pax2pay.Account.is) &&
-			((accounts?.[0]?.balances?.USD?.actual ?? 0) > (accounts?.[1]?.balances?.USD?.actual ?? 0)
-				? (source = accounts?.[0].id && (target = accounts?.[1].id))
-				: (source = accounts?.[1].id && (target = accounts?.[0].id)))
+		!accounts
+			? undefined
+			: (accounts?.[0]?.balances?.USD?.actual ?? 0) > (accounts?.[1]?.balances?.USD?.actual ?? 0)
+			? ((source = accounts?.[0].id), (target = accounts?.[1].id))
+			: ((source = accounts?.[1].id), (target = accounts?.[0].id))
 		const transaction: pax2pay.Transaction.Creatable = {
 			counterpart: { type: "internal", identifier: target },
 			currency: "USD",
