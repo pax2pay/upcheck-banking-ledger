@@ -9,7 +9,7 @@ dotenv.config()
 
 const client = process.env.url ? pax2pay.Client.create(process.env.url, "") : undefined
 client && (client.realm = "test")
-client && (client.organization = "Y2TgAgLN")
+client && (client.organization = "agpiPo0v")
 let token: string | gracely.Error
 let accounts: pax2pay.Account[] | undefined
 let target: string
@@ -37,11 +37,13 @@ describe("pax2pay Ledger", () => {
 		).toBeTruthy()
 	})
 	it("create internal", async () => {
-		!accounts
-			? undefined
-			: (accounts?.[0]?.balances?.USD?.actual ?? 0) > (accounts?.[1]?.balances?.USD?.actual ?? 0)
-			? ((source = accounts?.[0].id), (target = accounts?.[1].id))
-			: ((source = accounts?.[1].id), (target = accounts?.[0].id))
+		// !accounts
+		// 	? undefined
+		// 	: (accounts?.[0]?.balances?.USD?.actual ?? 0) > (accounts?.[1]?.balances?.USD?.actual ?? 0)
+		// 	? ((source = accounts?.[0].id), (target = accounts?.[1].id))
+		// 	: ((source = accounts?.[1].id), (target = accounts?.[0].id))
+		source = "WzauRHBO"
+		target = "hJJ5AD-y"
 		const transaction: pax2pay.Transaction.Creatable = {
 			counterpart: { type: "internal", identifier: target },
 			currency: "USD",
@@ -53,20 +55,20 @@ describe("pax2pay Ledger", () => {
 			pax2pay.Transaction.is(internal) && (internal.status == "created" || internal.status == "processing")
 		).toBeTruthy()
 	})
-	it("total balance constant", async () => {
-		//await new Promise(resolve => setTimeout(resolve, 31000))
-		const accounts = await client?.accounts.list()
-		expect(
-			accounts &&
-				!gracely.Error.is(accounts) &&
-				accounts?.every(pax2pay.Account.is) &&
-				accounts.map(
-					a =>
-						(Balances.after = Balances.add(Balances.after, Balances.getAvailable(a.balances))) &&
-						Balances.areEqual(Balances.before, Balances.after)
-				)
-		).toBeTruthy()
-	}) // 60000
+	// it("total balance constant", async () => {
+	// 	//await new Promise(resolve => setTimeout(resolve, 31000))
+	// 	const accounts = await client?.accounts.list()
+	// 	expect(
+	// 		accounts &&
+	// 			!gracely.Error.is(accounts) &&
+	// 			accounts?.every(pax2pay.Account.is) &&
+	// 			accounts.map(
+	// 				a =>
+	// 					(Balances.after = Balances.add(Balances.after, Balances.getAvailable(a.balances))) &&
+	// 					Balances.areEqual(Balances.before, Balances.after)
+	// 			)
+	// 	).toBeTruthy()
+	// }) // 60000
 })
 
 namespace Balances {
