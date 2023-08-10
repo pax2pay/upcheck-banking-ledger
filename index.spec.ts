@@ -14,6 +14,8 @@ let token: string | gracely.Error
 let accounts: pax2pay.Account[] | undefined
 let target: string
 let source: string
+let targetPaxgiro: string
+let sourcePaxgiro: string
 
 describe("pax2pay Ledger", () => {
 	beforeAll(async () => {
@@ -51,6 +53,32 @@ describe("pax2pay Ledger", () => {
 		const internal = await client?.transactions.create(source, transaction)
 		expect(
 			pax2pay.Transaction.is(internal) && (internal.status == "created" || internal.status == "processing")
+		).toBeTruthy()
+	})
+	it("create paxgiro", async () => {
+		let type: pax2pay.Rail.Type = "paxgiro"
+		!accounts
+			? undefined
+			: (accounts?.[0]?.balances?.USD?.actual ?? 0) > (accounts?.[1]?.balances?.USD?.actual ?? 0)
+			? ((sourcePaxgiro = accounts?.[0].id),
+			  (targetPaxgiro =
+					accounts?.[1].rails[0].type == "paxgiro"
+						? accounts?.[1].rails[0].identifier
+						: (accounts?.[1].id, (type = "internal"))))
+			: ((sourcePaxgiro = accounts?.[1].id),
+			  (targetPaxgiro =
+					accounts?.[0].rails[0].type == "paxgiro"
+						? accounts?.[0].rails[0].identifier
+						: (accounts?.[0].id, (type = "internal"))))
+		const transaction: pax2pay.Transaction.Creatable = {
+			counterpart: { type: type, identifier: targetPaxgiro },
+			currency: "USD",
+			amount: 1,
+			description: "upcheck paxgiro transaction",
+		}
+		const paxgiro = await client?.transactions.create(sourcePaxgiro, transaction)
+		expect(
+			pax2pay.Transaction.is(paxgiro) && (paxgiro.status == "created" || paxgiro.status == "processing")
 		).toBeTruthy()
 	})
 	it("total balance constant", async () => {
