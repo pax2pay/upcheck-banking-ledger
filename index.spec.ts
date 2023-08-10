@@ -12,7 +12,8 @@ client && (client.realm = "test")
 client && (client.organization = "agpiPo0v")
 let token: string | gracely.Error
 let accounts: pax2pay.Account[] | undefined
-let target: string
+let targetInternal: string
+let targetPaxgiro: string
 let source: string
 
 describe("pax2pay Ledger", () => {
@@ -24,6 +25,7 @@ describe("pax2pay Ledger", () => {
 		token = userwidgets.User.Key.is(key) ? key.token : gracely.client.unauthorized()
 		typeof token == "string" && client && (client.key = token)
 		accounts = await client?.accounts.list().then(r => (gracely.Error.is(r) || r.length < 2 ? undefined : r))
+		source = "WzauRHBO"
 	})
 	it("get token", async () => {
 		expect(typeof token == "string").toBeTruthy()
@@ -42,10 +44,9 @@ describe("pax2pay Ledger", () => {
 		// 	: (accounts?.[0]?.balances?.USD?.actual ?? 0) > (accounts?.[1]?.balances?.USD?.actual ?? 0)
 		// 	? ((source = accounts?.[0].id), (target = accounts?.[1].id))
 		// 	: ((source = accounts?.[1].id), (target = accounts?.[0].id))
-		source = "WzauRHBO"
-		target = "hJJ5AD-y"
+		targetInternal = "hJJ5AD-y"
 		const transaction: pax2pay.Transaction.Creatable = {
-			counterpart: { type: "internal", identifier: target },
+			counterpart: { type: "internal", identifier: targetInternal },
 			currency: "USD",
 			amount: 100,
 			description: "upcheck internal transaction",
@@ -53,6 +54,19 @@ describe("pax2pay Ledger", () => {
 		const internal = await client?.transactions.create(source, transaction)
 		expect(
 			pax2pay.Transaction.is(internal) && (internal.status == "created" || internal.status == "processing")
+		).toBeTruthy()
+	})
+	it("create paxgiro", async () => {
+		targetPaxgiro = "kOXi7IgA"
+		const transaction: pax2pay.Transaction.Creatable = {
+			counterpart: { type: "paxgiro", identifier: targetPaxgiro },
+			currency: "USD",
+			amount: 1,
+			description: "upcheck paxgiro transaction",
+		}
+		const external = await client?.transactions.create(source, transaction)
+		expect(
+			pax2pay.Transaction.is(external) && (external.status == "created" || external.status == "processing")
 		).toBeTruthy()
 	})
 	// it("total balance constant", async () => {
