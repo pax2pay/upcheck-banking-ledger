@@ -71,7 +71,7 @@ describe("pax2pay Ledger", () => {
 						? accounts?.[0].rails[0].identifier
 						: (accounts?.[0].id, (type = "internal"))))
 		const transaction: pax2pay.Transaction.Creatable = {
-			counterpart: { type: type, identifier: targetPaxgiro },
+			counterpart: { type: type, identifier: targetPaxgiro } as pax2pay.Rail,
 			currency: "USD",
 			amount: 1,
 			description: "upcheck paxgiro transaction",
