@@ -48,6 +48,13 @@ commands:
               exit 1
             fi
 jobs:
+   pax2pay-banking-ledger-api-mute:
+    executor: node/default
+    <<: *default
+    steps:
+      - test-pax2pay-banking-ledger-api
+      - attach_workspace:
+          at: workspace
    pax2pay-banking-ledger-api-quiet:
     executor: node/default
     <<: *default
@@ -104,4 +111,4 @@ workflows:
       - pax2pay-banking-ledger-api-notify
   build:
     jobs:
-      - pax2pay-banking-ledger-api-notify
+      - pax2pay-banking-ledger-api-mute
