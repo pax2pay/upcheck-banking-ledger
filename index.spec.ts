@@ -7,6 +7,7 @@ import * as dotenv from "dotenv"
 
 dotenv.config()
 
+jest.setTimeout(15000)
 const client = process.env.url ? pax2pay.Client.create(process.env.url, "") : undefined
 client && (client.realm = "test")
 client && (client.organization = "agpiPo0v")
