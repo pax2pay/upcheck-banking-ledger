@@ -29,7 +29,7 @@
 			]
 		},
 		"transformIgnorePatterns": [
-			"<rootDir>/node_modules/(?!(cryptly|authly|isoly|isly|gracely|cloudly-http|cloudly-router|cloudly-rest|cloudly-formdata|@pax2pay|@userwidgets)/.*)"
+			"<rootDir>/node_modules/(?!(cryptly|authly|isoly|isly|flagly|gracely|cloudly-http|cloudly-router|cloudly-rest|cloudly-formdata|@pax2pay|@userwidgets)/.*)"
 		],
 		"testEnvironment": "node",
 		"testRegex": "((\\.|/)(test|spec))(\\.|\\/.+)(jsx?|tsx?)$",
@@ -56,7 +56,7 @@
 		"@types/jest": "^29.5.0",
 		"@typescript-eslint/eslint-plugin": "5.60.1",
 		"@typescript-eslint/parser": "5.60.1",
-		"@userwidgets/model": "^0.4.6",
+		"@userwidgets/model": "0.8.11",
 		"dotenv": "^16.0.3",
 		"eslint": "^8.43.0",
 		"eslint-plugin-prettierx": "github:utily/eslint-plugin-prettierx#utily-20221229",
