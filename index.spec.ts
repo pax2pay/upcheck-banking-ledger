@@ -75,9 +75,9 @@ describe("pax2pay Ledger", () => {
 						? accounts?.[0].rails[0].identifier
 						: (accounts?.[0].id, (type = "internal"))))
 		const transaction: pax2pay.Transaction.Creatable = {
-			counterpart: { type: type, identifier: targetPaxgiro } as pax2pay.Rail,
+			counterpart: { type, identifier: targetPaxgiro } as pax2pay.Rail,
 			currency: "GBP",
-			amount: 1,
+			amount: 20 * isoly.DateTime.getMinute(isoly.DateTime.now()),
 			description: "upcheck paxgiro transaction",
 			operations: [],
 		}
