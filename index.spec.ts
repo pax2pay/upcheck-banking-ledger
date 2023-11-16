@@ -51,7 +51,6 @@ describe("pax2pay Ledger", () => {
 			currency: "GBP",
 			amount: 100,
 			description: "upcheck internal transaction",
-			operations: [],
 		}
 		const internal = await client?.transactions.create(source, transaction)
 		console.log("internal: ", internal)
@@ -79,7 +78,6 @@ describe("pax2pay Ledger", () => {
 			currency: "GBP",
 			amount: 20 * isoly.DateTime.getMinute(isoly.DateTime.now()),
 			description: "upcheck paxgiro transaction",
-			operations: [],
 		}
 		const paxgiro = await client?.transactions.create(sourcePaxgiro, transaction)
 		console.log("paxgiro: ", paxgiro)
@@ -134,17 +132,17 @@ namespace Balances {
 		balance2: Partial<Record<isoly.Currency, number>>
 	): Partial<Record<isoly.Currency, number>> {
 		const result: Partial<Record<isoly.Currency, number>> = {}
-		for (const currency of isoly.Currency.types)
-			result[currency] = isoly.Currency.add(currency, balance1[currency] ?? 0, balance2[currency] ?? 0)
+		;([...new Set([...Object.keys(balance1), ...Object.keys(balance2)]).values()] as isoly.Currency[]).forEach(
+			currency => (result[currency] = isoly.Currency.add(currency, balance1[currency] ?? 0, balance2[currency] ?? 0))
+		)
 		return result
 	}
 	export function areEqual(
 		balance1: Partial<Record<isoly.Currency, number>>,
 		balance2: Partial<Record<isoly.Currency, number>>
 	): boolean {
-		let result = false
-		for (const currency of isoly.Currency.types)
-			result = balance1[currency] == balance2[currency]
-		return result
+		return ([...new Set([...Object.keys(balance1), ...Object.keys(balance2)]).values()] as isoly.Currency[]).every(
+			currency => balance1[currency] == balance2[currency]
+		)
 	}
 }
