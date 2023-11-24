@@ -19,15 +19,17 @@ let sourcePaxgiro: string
 
 describe("pax2pay Ledger", () => {
 	beforeAll(async () => {
-		const key = await client?.userwidgets.me.login({
+		const key = await client?.userwidgets("https://user.pax2pay.app", "https://dash.pax2pay.app").me.login({
 			user: process.env.email ?? "",
 			password: process.env.password ?? "",
 		})
 		token = !gracely.Error.is(key) && key?.token ? key.token : gracely.client.unauthorized()
 		!gracely.Error.is(token) && client && (client.key = token)
-		accounts = (await client?.accounts.list().then(r => (gracely.Error.is(r) || r.length < 2 ? undefined : r)))?.filter(
-			e => e.id == "HyKIx45x" || e.id == "wIJxbBFE"
-		)
+		accounts = await client?.accounts
+			.list()
+			.then(r =>
+				gracely.Error.is(r) || r.length < 2 ? undefined : r.filter(e => e.id == "HyKIx45x" || e.id == "wIJxbBFE")
+			)
 	})
 	it("get token", async () => {
 		expect(typeof token == "string").toBeTruthy()
