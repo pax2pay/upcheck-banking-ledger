@@ -52,13 +52,13 @@
 		"clean": "rimraf dist node_modules coverage"
 	},
 	"devDependencies": {
-		"@pax2pay/model-banking": "0.1.191",
-		"@types/jest": "^29.5.8",
-		"@typescript-eslint/eslint-plugin": "6.11.0",
-		"@typescript-eslint/parser": "6.11.0",
-		"@userwidgets/model": "0.8.12",
+		"@pax2pay/model-banking": "0.1.231",
+		"@types/jest": "^29.5.11",
+		"@typescript-eslint/eslint-plugin": "6.19.0",
+		"@typescript-eslint/parser": "6.19.0",
+		"@userwidgets/model": "0.8.19",
 		"dotenv": "^16.3.1",
-		"eslint": "^8.53.0",
+		"eslint": "^8.56.0",
 		"eslint-plugin-prettierx": "github:utily/eslint-plugin-prettierx#utily-20231004",
 		"eslint-plugin-simple-import-sort": "^10.0.0",
 		"isomorphic-fetch": "3.0.0",
@@ -66,11 +66,11 @@
 		"prettierx": "github:utily/prettierx#utily-20231004",
 		"rimraf": "^5.0.5",
 		"ts-jest": "^29.1.1",
-		"typescript": "^5.2.2"
+		"typescript": "^5.3.3"
 	},
 	"dependencies": {
-		"gracely": "^2.0.6",
-		"isoly": "^2.1.1"
+		"gracely": "^2.0.8",
+		"isoly": "^2.3.6"
 	},
 	"overrides": {
 		"semver": "7.5.3",
