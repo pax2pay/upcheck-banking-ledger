@@ -61,7 +61,7 @@ describe("pax2pay Ledger", () => {
 		).toBeTruthy()
 	})
 	it("create paxgiro", async () => {
-		let type: pax2pay.Rail.Type = "paxgiro"
+		let type: pax2pay.Rail.Address.Type = "paxgiro" as const
 		!accounts
 			? undefined
 			: (accounts?.[0]?.balances?.GBP?.actual ?? 0) > (accounts?.[1]?.balances?.GBP?.actual ?? 0)
@@ -76,7 +76,7 @@ describe("pax2pay Ledger", () => {
 						? accounts?.[0].rails[0].identifier
 						: (accounts?.[0].id, (type = "internal"))))
 		const transaction: pax2pay.Transaction.Creatable = {
-			counterpart: { type, identifier: targetPaxgiro } as pax2pay.Rail,
+			counterpart: { type, identifier: targetPaxgiro } as pax2pay.Rail.Address,
 			currency: "GBP",
 			amount: 20 * isoly.DateTime.getMinute(isoly.DateTime.now()),
 			description: "upcheck paxgiro transaction",
