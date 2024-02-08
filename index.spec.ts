@@ -9,6 +9,7 @@ dotenv.config()
 jest.setTimeout(15000)
 const client = process.env.url ? pax2pay.Client.create(process.env.url, "") : undefined
 client && (client.realm = "test")
+/* cspell: disable-next-line */
 client && (client.organization = "agpiPo0v")
 let token: string | gracely.Error
 let accounts: pax2pay.Account[] | undefined
