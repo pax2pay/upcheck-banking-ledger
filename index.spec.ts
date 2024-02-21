@@ -2,6 +2,7 @@ import { gracely } from "gracely"
 import { isoly } from "isoly"
 import "isomorphic-fetch"
 import { pax2pay } from "@pax2pay/model-banking"
+import { http } from "cloudly-http"
 import * as dotenv from "dotenv"
 
 dotenv.config()
@@ -100,6 +101,22 @@ describe("pax2pay Ledger", () => {
 						Balances.areEqual(Balances.before, Balances.after)
 				)
 		).toBeTruthy()
+	})
+	it.each(["testUK", "uk"] as const)("Clearbank signer health", async realm => {
+		const results = {
+			testUK:
+				"mJ8phBCco1Tm2jiHUDXXZVQM28SIz/kCaQ6xsYckvkwsjstMM8G1a2mrz/KtYl/yfOJOGVUQ8csJYe+WQ0fkM9RkHZo263e7fnDAEHdM+qqX0pMuQxQ+k3UwJltBpRGBYA4elXwVp3svPof0Utzse9VTFbVqIdg4loCyVQkVnPhyiLHmIDtiu/627Idm3SsCK2sydI6ebf5CrcmJVufLdqC0DoFgtd5mqr5K3AB1CVQY9v14KPNba/U6g0gBJGkfTA8M2F7H65WVG5H/2t5MMe1TxQ1GMds3ud4Upmo0YE8xZ45Qm1si+B7sPnQmz5Rnk+8CSebBOPiTumKCR62nNA==",
+			uk: "EosDcM8deXNQb/5VGBpG1nA46t66zxWgYuSMJFAxjPyADcxHOmIP9ImkK+X3yZkPBx1TEeDijaytk1MouWQo85RHxd4N9LHKOrNaUqdZLsnjIH6E0hMSv8uqgeOFnWauuuICyRfgCNbuKUHc5Clijr4uAnJvmW1hw+q2FdVZU+jORHGT4hHqPgCp2d2cJsKzx8GemFy1achvihhhOGisLvDBaGULb3rac9C1n7RUdCEjYCh664uTuBY0DvqmRmKwdCk+/SsEDO2fUESVFE5Zh6VQOZfTXOBtjpPOKgh7e+tBUpBR/BISslUweUNflpH11prSvMjyTklA5jQFR/9rNg==",
+		}
+		const response = await http.fetch({
+			method: "GET",
+			url: "https://banking.pax2pay.app/service/clearbank/signer/health",
+			header: { realm },
+		})
+		const body = await response.body
+		response.status != 200 &&
+			console.log(`Signer health response on ${realm}: `, JSON.stringify({ ...response, body }, null, 2))
+		expect(body).toBe(results[realm])
 	})
 })
 
