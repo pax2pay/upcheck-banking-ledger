@@ -52,7 +52,7 @@
 		"clean": "rimraf dist node_modules coverage"
 	},
 	"devDependencies": {
-		"@pax2pay/model-banking": "0.1.231",
+		"@pax2pay/model-banking": "0.1.260",
 		"@types/jest": "^29.5.11",
 		"@typescript-eslint/eslint-plugin": "6.19.0",
 		"@typescript-eslint/parser": "6.19.0",
