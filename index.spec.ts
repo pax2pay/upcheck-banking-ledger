@@ -32,7 +32,11 @@ describe("pax2pay Ledger", () => {
 			.then(r =>
 				gracely.Error.is(r) || r.length < 2 ? undefined : r.filter(e => e.id == "HyKIx45x" || e.id == "wIJxbBFE")
 			)
-		console.log("accounts: ", accounts)
+		console.log(
+			`${
+				typeof client == "undefined" ? "client undefined\n" : gracely.Error.is(token) ? "unauthorized" : ""
+			}accounts: ${accounts}`
+		)
 	})
 	it("get token", async () => {
 		expect(typeof token == "string").toBeTruthy()
