@@ -34,8 +34,12 @@ describe("pax2pay Ledger", () => {
 			)
 		console.log(
 			`${
-				typeof client == "undefined" ? "client undefined\n" : gracely.Error.is(token) ? "unauthorized" : ""
-			}accounts: ${accounts}`
+				typeof client == "undefined"
+					? "client undefined"
+					: gracely.Error.is(token)
+					? "unauthorized"
+					: `accounts: ${accounts}`
+			}`
 		)
 	})
 	it("get token", async () => {
