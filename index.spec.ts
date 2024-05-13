@@ -30,9 +30,9 @@ describe("pax2pay Ledger", () => {
 		accounts = await client?.accounts
 			.list()
 			.then(r =>
-				gracely.Error.is(r) || typeof r == "undefined" || r.length < 2
-					? undefined
-					: r.filter(e => e.id == "HyKIx45x" || e.id == "wIJxbBFE")
+				Array.isArray(r) && r.length >= 2
+					? r.filter(e => e.id == "HyKIx45x" || e.id == "wIJxbBFE")
+					: (console.log(r), undefined)
 			)
 		console.log(
 			`${
