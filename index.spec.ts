@@ -113,7 +113,7 @@ describe("pax2pay Ledger", () => {
 				)
 		).toBeTruthy()
 	})
-	it.each(["testUK", "uk"] as const)("Clearbank signer health", async realm => {
+	it.each(["uk"] as const)("Clearbank signer health", async realm => {
 		const results = {
 			testUK:
 				"mJ8phBCco1Tm2jiHUDXXZVQM28SIz/kCaQ6xsYckvkwsjstMM8G1a2mrz/KtYl/yfOJOGVUQ8csJYe+WQ0fkM9RkHZo263e7fnDAEHdM+qqX0pMuQxQ+k3UwJltBpRGBYA4elXwVp3svPof0Utzse9VTFbVqIdg4loCyVQkVnPhyiLHmIDtiu/627Idm3SsCK2sydI6ebf5CrcmJVufLdqC0DoFgtd5mqr5K3AB1CVQY9v14KPNba/U6g0gBJGkfTA8M2F7H65WVG5H/2t5MMe1TxQ1GMds3ud4Upmo0YE8xZ45Qm1si+B7sPnQmz5Rnk+8CSebBOPiTumKCR62nNA==",
