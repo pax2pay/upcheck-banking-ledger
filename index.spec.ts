@@ -70,7 +70,8 @@ describe("pax2pay Ledger", () => {
 		const internal = await client?.transactions.create(source, transaction)
 		console.log("internal: ", internal)
 		expect(
-			pax2pay.Transaction.is(internal) && (internal.status == "created" || internal.status == "processing")
+			pax2pay.Transaction.is(internal) &&
+				(internal.status == "review" || internal.status == "created" || internal.status == "processing")
 		).toBeTruthy()
 	})
 	it("create paxgiro", async () => {
@@ -97,7 +98,8 @@ describe("pax2pay Ledger", () => {
 		const paxgiro = await client?.transactions.create(sourcePaxgiro, transaction)
 		console.log("paxgiro: ", paxgiro)
 		expect(
-			pax2pay.Transaction.is(paxgiro) && (paxgiro.status == "created" || paxgiro.status == "processing")
+			pax2pay.Transaction.is(paxgiro) &&
+				(paxgiro.status == "review" || paxgiro.status == "created" || paxgiro.status == "processing")
 		).toBeTruthy()
 	})
 	it("total balance constant", async () => {
