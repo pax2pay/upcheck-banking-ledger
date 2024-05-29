@@ -4,6 +4,7 @@ import "isomorphic-fetch"
 import { pax2pay } from "@pax2pay/model-banking"
 import { http } from "cloudly-http"
 import * as dotenv from "dotenv"
+import { credit } from "./credit"
 
 dotenv.config()
 
@@ -130,6 +131,15 @@ describe("pax2pay Ledger", () => {
 		response.status != 200 &&
 			console.log(`Signer health response on ${realm}: `, JSON.stringify({ ...response, body }, null, 2))
 		expect(body).toBe(results[realm])
+	})
+	it("credit", async () => {
+		const transaction = client && (await credit.applyFor(client, "hJJ5AD-y"))
+		const is = pax2pay.Transaction.is(transaction)
+		!is && console.log("credit transaction error: ", transaction)
+		expect(is).toBe(true)
+	})
+	it("settle credit", async () => {
+		expect(await credit.settle()).toBe(true)
 	})
 })
 
