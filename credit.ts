@@ -17,7 +17,7 @@ export namespace credit {
 	}
 	export async function settle(): Promise<boolean> {
 		let result: boolean
-		if (new Date().getUTCHours() == 12) {
+		if (new Date().getUTCHours() == 10) {
 			const response = await http.fetch("https://credit.paxgiro.com/settlement")
 			const body = await response.body
 			result =
