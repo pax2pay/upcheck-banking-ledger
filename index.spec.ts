@@ -93,7 +93,7 @@ describe("pax2pay Ledger", () => {
 		const transaction: pax2pay.Transaction.Creatable = {
 			counterpart: { type, identifier: targetPaxgiro } as pax2pay.Rail.Address,
 			currency: "GBP",
-			amount: 20 * isoly.DateTime.getMinute(isoly.DateTime.now()),
+			amount: 20 * isoly.DateTime.getMinute(isoly.DateTime.now()) + 1,
 			description: "upcheck paxgiro transaction",
 		}
 		const paxgiro = await client?.transactions.create(sourcePaxgiro, transaction)
