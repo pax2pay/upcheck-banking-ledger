@@ -84,17 +84,17 @@ workflows:
   pax2pay-banking-ledger:
     triggers:
       - schedule:
-          cron: "7,17,27,47,57 * * * *"
+          cron: "2,12,22,42,52 * * * *"
           filters:
             branches:
               only: master
       - schedule:
-          cron: "37 00-12 * * *"
+          cron: "32 00-12 * * *"
           filters:
             branches:
               only: master
       - schedule:
-          cron: "37 14-23 * * *"
+          cron: "32 14-23 * * *"
           filters:
             branches:
               only: master
@@ -103,7 +103,7 @@ workflows:
   daily:
     triggers:
       - schedule:
-          cron: "37 13 * * *"
+          cron: "32 13 * * *"
           filters:
             branches:
               only: master
