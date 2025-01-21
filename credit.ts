@@ -15,6 +15,7 @@ export namespace credit {
 		}
 		return client.transactions.create(account, loan)
 	}
+
 	export async function settle(): Promise<boolean> {
 		let result: boolean
 		const date = new Date()

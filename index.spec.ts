@@ -21,25 +21,37 @@ describe("pax2pay Ledger", () => {
 	it("create internal", async () => {
 		const internal = transactions.internal
 		const is =
-			pax2pay.Transaction.is(internal) &&
+			pax2pay.Transaction.type.is(internal) &&
 			(internal.status == "review" || internal.status == "created" || internal.status == "processing")
 		expect(is).toBeTruthy()
-		!is && console.log("internal: ", JSON.stringify(internal, null, 2))
+		!is &&
+			console.log(
+				"internal: ",
+				JSON.stringify(internal, null, 2),
+				"flaw: ",
+				JSON.stringify(pax2pay.Transaction.type.flaw(internal), null, 2)
+			)
 	})
 	it("create paxgiro", async () => {
 		const paxgiro = transactions.paxgiro
 		const is =
-			pax2pay.Transaction.is(paxgiro) &&
+			pax2pay.Transaction.type.is(paxgiro) &&
 			(paxgiro.status == "review" || paxgiro.status == "created" || paxgiro.status == "processing")
 		expect(is).toBeTruthy()
-		!is && console.log("paxgiro: ", JSON.stringify(paxgiro, null, 2))
+		!is &&
+			console.log(
+				"paxgiro: ",
+				JSON.stringify(paxgiro, null, 2),
+				"flaw: ",
+				JSON.stringify(pax2pay.Transaction.type.flaw(paxgiro), null, 2)
+			)
 	})
 	it("total balance constant", async () => {
 		const accounts = await ledger?.accounts
 		expect(
 			accounts &&
 				!gracely.Error.is(accounts) &&
-				accounts?.every(pax2pay.Account.is) &&
+				accounts?.every(pax2pay.Account.type.is) &&
 				accounts.map(
 					a =>
 						(Balances.after = Balances.add(Balances.after, Balances.getAvailable(a.balances))) &&
@@ -56,8 +68,14 @@ describe("pax2pay Ledger", () => {
 	})
 	it("credit", async () => {
 		const transaction = transactions.credit
-		const is = pax2pay.Transaction.is(transaction)
-		!is && console.log("credit transaction error: ", transaction)
+		const is = pax2pay.Transaction.type.is(transaction)
+		!is &&
+			console.log(
+				"credit transaction error: ",
+				transaction,
+				"flaw: ",
+				JSON.stringify(pax2pay.Transaction.type.flaw(transaction), null, 2)
+			)
 		expect(is).toBe(true)
 	})
 	it("settle credit", async () => {
