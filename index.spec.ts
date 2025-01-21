@@ -21,7 +21,7 @@ describe("pax2pay Ledger", () => {
 	it("create internal", async () => {
 		const internal = transactions.internal
 		const is =
-			pax2pay.Transaction.is(internal) &&
+			pax2pay.Transaction.type.is(internal) &&
 			(internal.status == "review" || internal.status == "created" || internal.status == "processing")
 		expect(is).toBeTruthy()
 		!is && console.log("internal: ", JSON.stringify(internal, null, 2))
@@ -29,7 +29,7 @@ describe("pax2pay Ledger", () => {
 	it("create paxgiro", async () => {
 		const paxgiro = transactions.paxgiro
 		const is =
-			pax2pay.Transaction.is(paxgiro) &&
+			pax2pay.Transaction.type.is(paxgiro) &&
 			(paxgiro.status == "review" || paxgiro.status == "created" || paxgiro.status == "processing")
 		expect(is).toBeTruthy()
 		!is && console.log("paxgiro: ", JSON.stringify(paxgiro, null, 2))
@@ -39,7 +39,7 @@ describe("pax2pay Ledger", () => {
 		expect(
 			accounts &&
 				!gracely.Error.is(accounts) &&
-				accounts?.every(pax2pay.Account.is) &&
+				accounts?.every(pax2pay.Account.type.is) &&
 				accounts.map(
 					a =>
 						(Balances.after = Balances.add(Balances.after, Balances.getAvailable(a.balances))) &&
@@ -56,7 +56,7 @@ describe("pax2pay Ledger", () => {
 	})
 	it("credit", async () => {
 		const transaction = transactions.credit
-		const is = pax2pay.Transaction.is(transaction)
+		const is = pax2pay.Transaction.type.is(transaction)
 		!is && console.log("credit transaction error: ", transaction)
 		expect(is).toBe(true)
 	})
