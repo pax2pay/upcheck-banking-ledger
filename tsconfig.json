@@ -1,15 +1,35 @@
 {
-	"extends": "./tsconfig.test.json",
 	"compilerOptions": {
-		"declaration": true,
-		"sourceMap": true,
-		"sourceRoot": "../",
-		"outDir": "dist",
-		"baseUrl": ".",
+		"target": "es2022",
+		"module": "es2022",
+		"lib": [
+			"es2022",
+			"webworker"
+		],
+		"allowJs": true,
 		"allowSyntheticDefaultImports": true,
-		"types": []
+		"esModuleInterop": true,
+		"noImplicitAny": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitThis": true,
+		"strictNullChecks": true,
+		"sourceMap": true,
+		"outDir": "dist",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"types": [
+			"vitest/globals"
+		]
 	},
+	"include": [
+		"**/*.spec.ts",
+	],
 	"files": [
-		"index.ts",
-	]
+		"index.ts"
+	],
+	"typeAcquisition": {
+		"enable": true
+	}
 }

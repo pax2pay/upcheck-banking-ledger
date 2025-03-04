@@ -1,6 +1,5 @@
 import { gracely } from "gracely"
 import { isoly } from "isoly"
-import "isomorphic-fetch"
 import { pax2pay } from "@pax2pay/model-banking"
 import { http } from "cloudly-http"
 import * as dotenv from "dotenv"

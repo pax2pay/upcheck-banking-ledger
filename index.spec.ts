@@ -1,11 +1,9 @@
 import { gracely } from "gracely"
-import "isomorphic-fetch"
 import { pax2pay } from "@pax2pay/model-banking"
 import { Balances } from "./Balances"
 import { credit } from "./credit"
 import { Ledger } from "./Ledger"
 
-jest.setTimeout(20000)
 let ledger: Ledger | undefined
 let transactions: Record<"internal" | "paxgiro" | "credit" | "clearbank", any>
 describe("pax2pay Ledger", () => {
