@@ -28,6 +28,7 @@ export class Ledger {
 			header: { realm: "uk" },
 		})
 		const body = await response.body
+		console.log("clerbankHealth finished.")
 		return { response, body }
 	}
 	async createPaxgiro() {
@@ -52,7 +53,9 @@ export class Ledger {
 			amount: 20 * isoly.DateTime.getMinute(isoly.DateTime.now()) + 1,
 			description: "upcheck paxgiro transaction",
 		}
-		return await this.client?.transactions.create(this.sourcePaxgiro ?? "", transaction)
+		const result = await this.client?.transactions.create(this.sourcePaxgiro ?? "", transaction)
+		console.log("createPaggiro finished.")
+		return result
 	}
 	async createInternal() {
 		const accounts = await this.accounts
@@ -67,7 +70,9 @@ export class Ledger {
 			amount: 100,
 			description: "upcheck internal transaction",
 		}
-		return await this.client?.transactions.create(this.source ?? "", transaction)
+		const result = await this.client?.transactions.create(this.source ?? "", transaction)
+		console.log("createInternal finished.")
+		return result
 	}
 	static async open(): Promise<Ledger> {
 		const client = process.env.url ? pax2pay.Client.create(process.env.url, "") : undefined

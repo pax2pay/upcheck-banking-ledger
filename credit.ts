@@ -13,7 +13,9 @@ export namespace credit {
 			amount: 100,
 			description: "upcheck credit loan",
 		}
-		return client.transactions.create(account, loan)
+		const result = client.transactions.create(account, loan)
+		console.log("applyFor finished.")
+		return result
 	}
 
 	export async function settle(): Promise<boolean> {
