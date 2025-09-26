@@ -28,25 +28,27 @@ export class Ledger {
 			header: { realm: "uk" },
 		})
 		const body = await response.body
-		console.log("clerbankHealth finished.")
+		console.log("clearbankHealth finished.")
 		return { response, body }
 	}
 	async createPaxgiro() {
 		let type: pax2pay.Rail.Address.Type = "paxgiro" as const
 		const accounts = await this.accounts
-		!accounts
-			? undefined
-			: (accounts?.[0]?.balances?.GBP?.actual ?? 0) > (accounts?.[1]?.balances?.GBP?.actual ?? 0)
-			? ((this.sourcePaxgiro = accounts?.[0].id),
-			  (this.targetPaxgiro =
+		if (accounts) {
+			if ((accounts?.[0]?.balances?.GBP?.actual ?? 0) > (accounts?.[1]?.balances?.GBP?.actual ?? 0)) {
+				this.sourcePaxgiro = accounts?.[0].id
+				this.targetPaxgiro =
 					accounts?.[1].rails[0].type == "paxgiro"
 						? accounts?.[1].rails[0].identifier
-						: (accounts?.[1].id, (type = "internal"))))
-			: ((this.sourcePaxgiro = accounts?.[1].id),
-			  (this.targetPaxgiro =
+						: (accounts?.[1].id, (type = "internal"))
+			} else {
+				this.sourcePaxgiro = accounts?.[1].id
+				this.targetPaxgiro =
 					accounts?.[0].rails[0].type == "paxgiro"
 						? accounts?.[0].rails[0].identifier
-						: (accounts?.[0].id, (type = "internal"))))
+						: (accounts?.[0].id, (type = "internal"))
+			}
+		}
 		const transaction: pax2pay.Transaction.Creatable = {
 			counterpart: { type, identifier: this.targetPaxgiro } as pax2pay.Rail.Address,
 			currency: "GBP",
@@ -54,16 +56,20 @@ export class Ledger {
 			description: "upcheck paxgiro transaction",
 		}
 		const result = await this.client?.transactions.create(this.sourcePaxgiro ?? "", transaction)
-		console.log("createPaggiro finished.")
+		console.log("createPaxgiro finished.")
 		return result
 	}
 	async createInternal() {
 		const accounts = await this.accounts
-		!accounts
-			? undefined
-			: (accounts?.[0]?.balances?.GBP?.actual ?? 0) > (accounts?.[1]?.balances?.GBP?.actual ?? 0)
-			? ((this.source = accounts?.[0].id), (this.target = accounts?.[1].id))
-			: ((this.source = accounts?.[1].id), (this.target = accounts?.[0].id))
+		if (accounts) {
+			if ((accounts?.[0]?.balances?.GBP?.actual ?? 0) > (accounts?.[1]?.balances?.GBP?.actual ?? 0)) {
+				this.source = accounts?.[0].id
+				this.target = accounts?.[1].id
+			} else {
+				this.source = accounts?.[1].id
+				this.target = accounts?.[0].id
+			}
+		}
 		const transaction: pax2pay.Transaction.Creatable = {
 			counterpart: { type: "internal", identifier: this.target ?? "" },
 			currency: "GBP",

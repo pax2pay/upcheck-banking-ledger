@@ -27,22 +27,22 @@
 		"clean": "rimraf dist node_modules coverage"
 	},
 	"devDependencies": {
-		"@pax2pay/model-banking": "0.1.535",
-		"@typescript-eslint/eslint-plugin": "7.8.0",
-		"@typescript-eslint/parser": "7.8.0",
-		"@userwidgets/model": "0.8.28",
-		"dotenv": "^16.4.5",
-		"eslint": "^8.56.0",
+		"@types/node": "^24.5.2",
+		"@typescript-eslint/eslint-plugin": "8.44.1",
+		"@typescript-eslint/parser": "8.44.1",
+		"eslint": "^8.57.0",
 		"eslint-plugin-prettierx": "github:utily/eslint-plugin-prettierx#utily-20231004",
-		"eslint-plugin-simple-import-sort": "^12.1.0",
+		"eslint-plugin-simple-import-sort": "^12.1.1",
 		"prettierx": "github:utily/prettierx#utily-20231004",
-		"rimraf": "^5.0.7",
-		"vitest": "^3.0.7",
-		"typescript": "^5.4.5"
+		"rimraf": "^6.0.1",
+		"vitest": "3.2.4",
+		"typescript": "^5.7.2"
 	},
 	"dependencies": {
-		"gracely": "^2.0.8",
-		"cloudly-http": "0.2.0-alpha.17",
-		"isoly": "^2.3.10"
+		"@pax2pay/model-banking": "0.1.558",
+		"cloudly-http": "0.2.0-alpha.24",
+		"dotenv": "^16.4.5",
+		"gracely": "^2.0.11",
+		"isoly": "3.0.6"
 	}
 }
