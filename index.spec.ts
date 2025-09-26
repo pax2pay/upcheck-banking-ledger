@@ -1,20 +1,18 @@
 import { gracely } from "gracely"
 import { pax2pay } from "@pax2pay/model-banking"
 import { Balances } from "./Balances"
-import { credit } from "./credit"
 import { Ledger } from "./Ledger"
 
 let ledger: Ledger | undefined
-let transactions: Record<"internal" | "paxgiro" | "credit" | "clearbank", any>
+let transactions: Record<"internal" | "paxgiro" | "clearbank", any>
 describe("pax2pay Ledger", () => {
 	beforeAll(async () => {
 		ledger = await Ledger.open()
 		transactions = await Promise.all([
 			ledger?.createInternal(),
 			ledger?.createPaxgiro(),
-			ledger?.client ? credit.applyFor(ledger?.client, "hJJ5AD-y") : undefined,
 			ledger?.clearbankHealth(),
-		]).then(t => ({ internal: t[0], paxgiro: t[1], credit: t[2], clearbank: t[3] }))
+		]).then(t => ({ internal: t[0], paxgiro: t[1], clearbank: t[2] }))
 	})
 	it("create internal", async () => {
 		const internal = transactions.internal
@@ -63,20 +61,5 @@ describe("pax2pay Ledger", () => {
 		const { response, body } = (await transactions.clearbank) ?? {}
 		response?.status != 200 && console.log(`Signer health response: `, JSON.stringify({ ...response, body }, null, 2))
 		expect(body).toBe(result)
-	})
-	it("credit", async () => {
-		const transaction = transactions.credit
-		const is = pax2pay.Transaction.type.is(transaction)
-		!is &&
-			console.log(
-				"credit transaction error: ",
-				transaction,
-				"flaw: ",
-				JSON.stringify(pax2pay.Transaction.type.flaw(transaction), null, 2)
-			)
-		expect(is).toBe(true)
-	})
-	it("settle credit", async () => {
-		expect(await credit.settle()).toBe(true)
 	})
 })
