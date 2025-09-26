@@ -1,6 +1,6 @@
 {
 	"name": "@utily/library-template",
-	"version": "0.0.55",
+	"version": "0.0.56",
 	"description": "Template library for Typescript.",
 	"author": "Utily Contributors",
 	"license": "MIT",
