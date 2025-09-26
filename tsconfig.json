@@ -19,8 +19,10 @@
 		"outDir": "dist",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
+		"skipLibCheck": true,
 		"types": [
-			"vitest/globals"
+			"vitest/globals",
+			"node"
 		]
 	},
 	"include": [
