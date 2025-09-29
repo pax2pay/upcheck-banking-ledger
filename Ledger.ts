@@ -85,11 +85,8 @@ export class Ledger {
 		client && (client.realm = "test")
 		/* cspell: disable-next-line */
 		client && (client.organization = "agpiPo0v")
-		const key = await client?.userwidgets("https://user.pax2pay.app", "https://dash.pax2pay.app").me.login({
-			user: process.env.email ?? "",
-			password: process.env.password ?? "",
-		})
-		const token = !gracely.Error.is(key) && key?.token ? key.token : gracely.client.unauthorized()
+		const token = ((await client?.me.login(process.env.email ?? "", process.env.password ?? "", "test")) ??
+			gracely.client.unauthorized()) as any as gracely.Error | string
 		!gracely.Error.is(token) && client && (client.key = token)
 		return new this(client)
 	}
