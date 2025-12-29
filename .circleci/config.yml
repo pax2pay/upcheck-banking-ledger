@@ -3,7 +3,7 @@ default: &default
   working_directory: ~/repo
 
 orbs:
-  node: circleci/node@5.0.2
+  node: circleci/node@7.2.1
   slack: circleci/slack@6.1.2
 
 commands:
