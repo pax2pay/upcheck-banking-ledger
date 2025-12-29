@@ -29,8 +29,8 @@ commands:
       - run:
           name: Run Pax2pay banking ledger API tests
           command: |
-            # We explicitly allow the command to fail here so we can capture output
-            if npm run test &> workspace/output ; then
+            # Added -- --no-colors to prevent ANSI codes from breaking the JSON payload
+            if npm run test -- --no-colors &> workspace/output ; then
               echo 'export TESTS_PASS=true' >> $BASH_ENV
             else
               echo 'export TESTS_PASS=false' >> $BASH_ENV
@@ -51,20 +51,24 @@ commands:
               exit 1
             fi
 
-  # New command to format logs for JSON
   format-log-for-slack:
     description: "Reads the output file and escapes it for Slack JSON"
     steps:
       - run:
           name: Format Log for Slack
-          when: on_fail # Only run this if the tests failed
+          when: on_fail
           command: |
-            # 1. Get last 30 lines (to avoid Slack char limits)
-            # 2. Escape backslashes
-            # 3. Escape double quotes
-            # 4. Replace newlines with literal \n characters
-            LOG_CONTENT=$(tail -n 30 workspace/output | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            echo "export SLACK_LOG_OUTPUT=\"$LOG_CONTENT\"" >> $BASH_ENV
+            # 1. Take the last 30 lines
+            tail -n 30 workspace/output > workspace/short_log
+            
+            # 2. Use Node to safely stringify the content. 
+            # This turns newlines into literal \n and escapes double quotes automatically.
+            # .slice(1, -1) removes the surrounding quotes that JSON.stringify adds,
+            # because we want to inject this INTO a string, not have it BE a string.
+            ESCAPED_VAL=$(node -e 'console.log(JSON.stringify(require("fs").readFileSync("workspace/short_log", "utf8")).slice(1, -1))')
+            
+            # 3. Export to BASH_ENV
+            echo "export SLACK_LOG_OUTPUT=\"$ESCAPED_VAL\"" >> $BASH_ENV
 
 jobs:
   pax2pay-banking-ledger-api-mute:
@@ -86,7 +90,6 @@ jobs:
       - slack/notify:
           event: fail
           mentions: '@here'
-          # We use a custom template block instead of basic_fail_1
           custom: |
             {
               "blocks": [
