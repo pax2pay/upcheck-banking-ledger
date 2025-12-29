@@ -63,7 +63,7 @@ commands:
               const util = require("util");
               try {
                 const log = fs.readFileSync("workspace/short_log", "utf8");
-                const escapedLog = util.stripVTControlCharacters(log);
+                const escapedLog = JSON.stringify(util.stripVTControlCharacters(log)).slice(1, -1);
                 fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${escapedLog}"\n`);
               } catch (e) {
                 console.error("Failed to format log:", e);
