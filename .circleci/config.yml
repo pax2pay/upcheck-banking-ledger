@@ -1,9 +1,11 @@
 version: 2.1
 default: &default
   working_directory: ~/repo
+
 orbs:
   node: circleci/node@5.0.2
   slack: circleci/slack@4.12.1
+
 commands:
   prepare:
     description: "Prepare working directory"
@@ -11,14 +13,14 @@ commands:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run: npm install
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+
   test-pax2pay-banking-ledger-api:
     description: "Pax2pay banking ledger API tests"
     steps:
@@ -27,6 +29,7 @@ commands:
       - run:
           name: Run Pax2pay banking ledger API tests
           command: |
+            # We explicitly allow the command to fail here so we can capture output
             if npm run test &> workspace/output ; then
               echo 'export TESTS_PASS=true' >> $BASH_ENV
             else
@@ -47,39 +50,119 @@ commands:
             else
               exit 1
             fi
+
+  # New command to format logs for JSON
+  format-log-for-slack:
+    description: "Reads the output file and escapes it for Slack JSON"
+    steps:
+      - run:
+          name: Format Log for Slack
+          when: on_fail # Only run this if the tests failed
+          command: |
+            # 1. Get last 30 lines (to avoid Slack char limits)
+            # 2. Escape backslashes
+            # 3. Escape double quotes
+            # 4. Replace newlines with literal \n characters
+            LOG_CONTENT=$(tail -n 30 workspace/output | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            echo "export SLACK_LOG_OUTPUT=\"$LOG_CONTENT\"" >> $BASH_ENV
+
 jobs:
-   pax2pay-banking-ledger-api-mute:
+  pax2pay-banking-ledger-api-mute:
     executor: node/default
     <<: *default
     steps:
       - test-pax2pay-banking-ledger-api
       - attach_workspace:
           at: workspace
-   pax2pay-banking-ledger-api-quiet:
+
+  pax2pay-banking-ledger-api-quiet:
     executor: node/default
     <<: *default
     steps:
       - test-pax2pay-banking-ledger-api
       - attach_workspace:
           at: workspace
+      - format-log-for-slack
       - slack/notify:
           event: fail
           mentions: '@here'
-          template: basic_fail_1
-   pax2pay-banking-ledger-api-notify:
+          # We use a custom template block instead of basic_fail_1
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🚨 Tests Failed: ${CIRCLE_JOB}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*<${CIRCLE_BUILD_URL}|View Full CircleCI Logs>*"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "```${SLACK_LOG_OUTPUT}```"
+                  }
+                }
+              ]
+            }
+
+  pax2pay-banking-ledger-api-notify:
     executor: node/default
     <<: *default
     steps:
       - test-pax2pay-banking-ledger-api
       - attach_workspace:
           at: workspace
+      - format-log-for-slack
       - slack/notify:
           event: fail
           mentions: '@here'
-          template: basic_fail_1
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🚨 Tests Failed: ${CIRCLE_JOB}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*<${CIRCLE_BUILD_URL}|View Full CircleCI Logs>*"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "```${SLACK_LOG_OUTPUT}```"
+                  }
+                }
+              ]
+            }
       - slack/notify:
           event: pass
           template: basic_success_1
+
 workflows:
   pax2pay-banking-ledger:
     triggers:
