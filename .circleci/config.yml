@@ -28,9 +28,9 @@ commands:
       - run: mkdir -p workspace
       - run:
           name: Run Pax2pay banking ledger API tests
+          # CHANGED: Switched --no-colors to --no-color (Vitest syntax)
           command: |
-            # Added -- --no-colors to prevent ANSI codes from breaking the JSON payload
-            if npm run test -- --no-colors &> workspace/output ; then
+            if npm run test -- --no-color &> workspace/output ; then
               echo 'export TESTS_PASS=true' >> $BASH_ENV
             else
               echo 'export TESTS_PASS=false' >> $BASH_ENV
@@ -57,18 +57,24 @@ commands:
       - run:
           name: Format Log for Slack
           when: on_fail
+          # CHANGED: We now write to BASH_ENV strictly inside Node
+          # to prevent Bash from trying to execute the error message.
           command: |
-            # 1. Take the last 30 lines
             tail -n 30 workspace/output > workspace/short_log
-            
-            # 2. Use Node to safely stringify the content. 
-            # This turns newlines into literal \n and escapes double quotes automatically.
-            # .slice(1, -1) removes the surrounding quotes that JSON.stringify adds,
-            # because we want to inject this INTO a string, not have it BE a string.
-            ESCAPED_VAL=$(node -e 'console.log(JSON.stringify(require("fs").readFileSync("workspace/short_log", "utf8")).slice(1, -1))')
-            
-            # 3. Export to BASH_ENV
-            echo "export SLACK_LOG_OUTPUT=\"$ESCAPED_VAL\"" >> $BASH_ENV
+            node -e '
+              const fs = require("fs");
+              try {
+                const log = fs.readFileSync("workspace/short_log", "utf8");
+                // JSON.stringify handles all escaping (newlines, quotes, etc.)
+                // .slice(1, -1) removes the surrounding quotes so we can insert it into the template
+                const escapedLog = JSON.stringify(log).slice(1, -1);
+                
+                // Append the export command directly to BASH_ENV
+                fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${escapedLog}"\n`);
+              } catch (e) {
+                console.error("Failed to format log:", e);
+              }
+            '
 
 jobs:
   pax2pay-banking-ledger-api-mute:
