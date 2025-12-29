@@ -28,6 +28,7 @@ commands:
       - run: mkdir -p workspace
       - run:
           name: Run Pax2pay banking ledger API tests
+          # CHANGED: Switched --no-colors to --no-color (Vitest syntax)
           command: |
             if npm run test -- --no-color &> workspace/output ; then
               echo 'export TESTS_PASS=true' >> $BASH_ENV
@@ -56,81 +57,24 @@ commands:
       - run:
           name: Format Log for Slack
           when: on_fail
+          # CHANGED: We now write to BASH_ENV strictly inside Node
+          # to prevent Bash from trying to execute the error message.
           command: |
             tail -n 30 workspace/output > workspace/short_log
             node -e '
               const fs = require("fs");
               try {
                 const log = fs.readFileSync("workspace/short_log", "utf8");
+                // JSON.stringify handles all escaping (newlines, quotes, etc.)
+                // .slice(1, -1) removes the surrounding quotes so we can insert it into the template
                 const escapedLog = JSON.stringify(log).slice(1, -1);
+                
+                // Append the export command directly to BASH_ENV
                 fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${escapedLog}"\n`);
               } catch (e) {
                 console.error("Failed to format log:", e);
               }
             '
-
-  # NEW COMMAND: Sends the threaded reply
-  notify-slack-thread:
-    description: "Sends the log output as a threaded reply"
-    steps:
-      - run:
-          name: Send Slack Thread Reply
-          when: on_fail
-          command: |
-            # 1. Use the Slack Orb to send the main message and capture the response
-            # We use curl manually here for the PARENT message so we can easily capture the "ts" (timestamp)
-            # The orb hides this response, so we have to do it "the hard way" to get threading.
-            
-            # Ensure SLACK_ACCESS_TOKEN and SLACK_DEFAULT_CHANNEL are set in Context/Project settings
-            
-            RESPONSE=$(curl -s -X POST -H 'Authorization: Bearer '$SLACK_ACCESS_TOKEN \
-            -H 'Content-type: application/json' \
-            --data '{
-              "channel": "'$SLACK_DEFAULT_CHANNEL'",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "🚨 Tests Failed: '$CIRCLE_JOB'",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*<'$CIRCLE_BUILD_URL'|View Full CircleCI Logs>*"
-                  }
-                }
-              ]
-            }' https://slack.com/api/chat.postMessage)
-            
-            # 2. Extract the timestamp (ts) from the response using Node
-            THREAD_TS=$(echo $RESPONSE | node -e 'console.log(JSON.parse(fs.readFileSync(0, "utf-8")).ts)')
-            
-            if [ "$THREAD_TS" == "undefined" ] || [ -z "$THREAD_TS" ]; then
-              echo "Error sending parent message: $RESPONSE"
-              exit 1
-            fi
-
-            # 3. Send the threaded reply with the log
-            curl -s -X POST -H 'Authorization: Bearer '$SLACK_ACCESS_TOKEN \
-            -H 'Content-type: application/json' \
-            --data '{
-              "channel": "'$SLACK_DEFAULT_CHANNEL'",
-              "thread_ts": "'$THREAD_TS'",
-              "text": "Here is the error log:",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "```'$SLACK_LOG_OUTPUT'```"
-                  }
-                }
-              ]
-            }' https://slack.com/api/chat.postMessage
 
 jobs:
   pax2pay-banking-ledger-api-mute:
@@ -149,8 +93,39 @@ jobs:
       - attach_workspace:
           at: workspace
       - format-log-for-slack
-      # Replaced slack/notify with our custom threaded command
-      - notify-slack-thread
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🚨 Tests Failed: ${CIRCLE_JOB}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*<${CIRCLE_BUILD_URL}|View Full CircleCI Logs>*"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "```${SLACK_LOG_OUTPUT}```"
+                  }
+                }
+              ]
+            }
 
   pax2pay-banking-ledger-api-notify:
     executor: node/default
@@ -160,8 +135,46 @@ jobs:
       - attach_workspace:
           at: workspace
       - format-log-for-slack
-      # Replaced slack/notify with our custom threaded command
-      - notify-slack-thread
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🚨 Tests Failed: ${CIRCLE_JOB}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*<${CIRCLE_BUILD_URL}|View Full CircleCI Logs>*"
+                  }
+                }
+              ]
+            }
+          thread_id: "anything"
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "```${SLACK_LOG_OUTPUT}```"
+                  }
+                }
+              ]
+            }
+          thread_id: "anything"
       - slack/notify:
           event: pass
           template: basic_success_1
