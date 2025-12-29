@@ -179,4 +179,4 @@ workflows:
       - pax2pay-banking-ledger-api-notify
   build:
     jobs:
-      - pax2pay-banking-ledger-api-notify
+      - pax2pay-banking-ledger-api-mute
