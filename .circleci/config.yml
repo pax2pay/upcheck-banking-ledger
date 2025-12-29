@@ -113,10 +113,16 @@ jobs:
                     "type": "mrkdwn",
                     "text": "*<${CIRCLE_BUILD_URL}|View Full CircleCI Logs>*"
                   }
-                },
-                {
-                  "type": "divider"
-                },
+                }
+              ]
+            }
+          thread_id: "anything"
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          custom: |
+            {
+              "blocks": [
                 {
                   "type": "section",
                   "text": {
@@ -126,6 +132,7 @@ jobs:
                 }
               ]
             }
+          thread_id: "anything"
 
   pax2pay-banking-ledger-api-notify:
     executor: node/default
