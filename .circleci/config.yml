@@ -96,6 +96,13 @@ commands:
                     "type": "mrkdwn",
                     "text": "*<${CIRCLE_BUILD_URL}|View Full CircleCI Logs>*"
                   }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "```${SLACK_LOG_OUTPUT}```"
+                  }
                 }
               ]
             }
@@ -180,4 +187,4 @@ workflows:
       - pax2pay-banking-ledger-api-notify
   build:
     jobs:
-      - pax2pay-banking-ledger-api-mute
+      - pax2pay-banking-ledger-api-notify
