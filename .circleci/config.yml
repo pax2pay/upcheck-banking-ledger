@@ -65,7 +65,7 @@ commands:
                 const sliced = log.slice(log.indexOf(`{"`));
                 const parsed = JSON.parse(sliced)
                 const output = parsed.testResults[0].assertionResults
-                // output.forEach(o => o.failureMessages.forEach(m => (m = m.slice(0, m.indexOf("\n    at")))))
+                output.forEach(o => o.failureMessages.forEach(m => (m = m.slice(0, m.indexOf("\n    at")))))
                 const escapedLog = JSON.stringify(output);
                 fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${escapedLog}"`);
                 escapedLog.includes("Error: Test timed out") && fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_TIMEOUT="⏳ Timed Out"\n`);
