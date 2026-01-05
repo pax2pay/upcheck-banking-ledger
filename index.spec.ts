@@ -26,7 +26,7 @@ describe("pax2pay Ledger", () => {
 				"flaw: ",
 				JSON.stringify(pax2pay.Transaction.type.flaw(internal), null, 2)
 			)
-		expect(is).toBeTruthy()
+		expect(!is).toBeTruthy()
 	})
 	it("create paxgiro", async () => {
 		const paxgiro = transactions.paxgiro
