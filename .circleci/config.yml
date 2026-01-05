@@ -116,7 +116,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "plain_text",
-                    "text": "${SLACK_LOG_OUTPUT}"
+                    "text": "```json\n${SLACK_LOG_OUTPUT}\n```"
                   }
                 }
               ]
