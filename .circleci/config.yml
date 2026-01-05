@@ -62,10 +62,10 @@ commands:
               const util = require("util");
               try {
                 const log = fs.readFileSync("workspace/output", "utf8");
-                const sliced = log.slice(log.indexOf(" ❯ index.spec.ts"));
-                const escapedLog = JSON.stringify(util.stripVTControlCharacters(sliced)).slice(1, -1);
-                fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${escapedLog}"\n`);
-                escapedLog.includes("Error: Test timed out") && fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_TIMEOUT="⏳ Timed Out"\n`);
+                const sliced = log.slice(log.indexOf(`{"`));
+                // const escapedLog = JSON.stringify(util.stripVTControlCharacters(sliced)).slice(1, -1);
+                fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${sliced}"\n`);
+                sliced.includes("Error: Test timed out") && fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_TIMEOUT="⏳ Timed Out"\n`);
               } catch (e) {
                 console.error("Failed to format log:", e);
               }
