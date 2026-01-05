@@ -115,8 +115,8 @@ commands:
                 {
                   "type": "section",
                   "text": {
-                    "type": "plain_text",
-                    "text": "``` json\n${SLACK_LOG_OUTPUT}\n```"
+                    "type": "mrkdwn",
+                    "text": "```json\n${SLACK_LOG_OUTPUT}\n```"
                   }
                 }
               ]
