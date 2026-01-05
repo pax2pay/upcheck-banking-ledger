@@ -113,7 +113,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${SLACK_LOG_OUTPUT}"
+                    "text": "```${SLACK_LOG_OUTPUT}```"
                   }
                 }
               ]
