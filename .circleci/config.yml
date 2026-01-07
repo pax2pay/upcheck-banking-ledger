@@ -122,8 +122,8 @@ commands:
                 {
                   "type": "section",
                   "text": {
-                    "type": "plain_text",
-                    "text": "${SLACK_LOG_OUTPUT}"
+                    "type": "mrkdwn",
+                    "text": "```${SLACK_LOG_OUTPUT}```"
                   }
                 }
               ]
