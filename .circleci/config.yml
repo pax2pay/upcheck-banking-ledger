@@ -65,10 +65,15 @@ commands:
                 const sliced = log.slice(log.indexOf(`{"`));
                 const parsed = JSON.parse(sliced)
                 console.log({parsed});
-                const output = parsed.testResults[0].assertionResults
-                console.log({output});
-                output.forEach(o => (o.failureMessages = o.failureMessages.map(m => m.slice(0, m.indexOf("\n    at")))))
-                // const escapedLog = JSON.stringify(JSON.stringify(output));
+                const tests = parsed.testResults[0].assertionResults
+                console.log({tests});
+                tests.forEach(o => {
+                  (o.failureMessages = o.failureMessages.map(m => m.slice(0, m.indexOf("\n    at"))));
+                  delete o.ancestorTitles;
+                  delete o.fullName;
+                  delete o.meta;
+                })
+                const output = { count: { passed: parsed.numPassedTests, failed: numFailedTests, total: parsed.numTotalTests }, tests}
                 const escapedLog = JSON.stringify(output, null, 2).slice(1, -1).replaceAll(`"`, `\\"`);
                 console.log({escapedLog});
                 fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${escapedLog}"`);
