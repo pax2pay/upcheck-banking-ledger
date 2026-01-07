@@ -74,6 +74,7 @@ commands:
                   delete o.fullName;
                   delete o.meta;
                 });
+                // 
                 const output = { count: { passed: parsed.numPassedTests, failed: parsed.numFailedTests, total: parsed.numTotalTests }, tests };
                 const escapedLog = JSON.stringify(output, null, 2).slice(1, -1).replaceAll(`"`, `\\"`);
                 console.log({escapedLog});
