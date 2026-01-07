@@ -9,6 +9,7 @@ export default defineConfig({
 		isolate: false,
 		exclude: ["node_modules", "dist"],
 		server: { deps: { inline: true } },
-		reporters: ["json"],
+		reporters: ["vitest-ctrf-json-reporter"],
+		outputFile: "./test-output.json",
 	},
 })

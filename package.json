@@ -35,8 +35,9 @@
 		"eslint-plugin-simple-import-sort": "^12.1.1",
 		"prettierx": "github:utily/prettierx#utily-20231004",
 		"rimraf": "^6.0.1",
+		"typescript": "^5.7.2",
 		"vitest": "3.2.4",
-		"typescript": "^5.7.2"
+		"vitest-ctrf-json-reporter": "0.0.3"
 	},
 	"dependencies": {
 		"@pax2pay/model-banking": "0.1.558",

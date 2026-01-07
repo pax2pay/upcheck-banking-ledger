@@ -1,0 +1,60 @@
+{
+  "results": {
+    "tool": {
+      "name": "vitest"
+    },
+    "summary": {
+      "tests": 4,
+      "passed": 1,
+      "failed": 3,
+      "pending": 0,
+      "skipped": 0,
+      "other": 0,
+      "start": 1767797185327,
+      "stop": 1767797209016
+    },
+    "tests": [
+      {
+        "name": "create internal",
+        "duration": 20009.667240000002,
+        "status": "failed",
+        "message": "Test timed out in 20000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".",
+        "rawStatus": "fail",
+        "type": "unit",
+        "filePath": "index.spec.ts",
+        "retries": 0
+      },
+      {
+        "name": "create paxgiro",
+        "duration": 3.624437999998918,
+        "status": "failed",
+        "message": "expected false to be truthy",
+        "rawStatus": "fail",
+        "type": "unit",
+        "filePath": "index.spec.ts",
+        "retries": 0
+      },
+      {
+        "name": "total balance constant",
+        "duration": 0.35061899999709567,
+        "status": "failed",
+        "message": "expected undefined to be truthy",
+        "rawStatus": "fail",
+        "type": "unit",
+        "filePath": "index.spec.ts",
+        "retries": 0
+      },
+      {
+        "name": "Clearbank signer health",
+        "duration": 0.2035570000007283,
+        "status": "passed",
+        "message": "",
+        "trace": "",
+        "rawStatus": "pass",
+        "type": "unit",
+        "filePath": "index.spec.ts",
+        "retries": 0
+      }
+    ]
+  }
+}
