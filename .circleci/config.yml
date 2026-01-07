@@ -72,8 +72,8 @@ commands:
                   delete o.ancestorTitles;
                   delete o.fullName;
                   delete o.meta;
-                })
-                const output = { count: { passed: parsed.numPassedTests, failed: numFailedTests, total: parsed.numTotalTests }, tests}
+                });
+                const output = { count: { passed: parsed.numPassedTests, failed: numFailedTests, total: parsed.numTotalTests }, tests };
                 const escapedLog = JSON.stringify(output, null, 2).slice(1, -1).replaceAll(`"`, `\\"`);
                 console.log({escapedLog});
                 fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${escapedLog}"`);
