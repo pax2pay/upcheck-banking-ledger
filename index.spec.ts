@@ -15,8 +15,8 @@ describe("pax2pay Ledger", () => {
 		]).then(t => ({ internal: t[0], paxgiro: t[1], clearbank: t[2] }))
 	})
 	it("create internal", async () => {
-		await new Promise(r => setTimeout(r, 20000))
 		const internal = {} // transactions.internal
+		await new Promise(r => setTimeout(r, 20000))
 		const is =
 			pax2pay.Transaction.type.is(internal) &&
 			(internal.status == "review" || internal.status == "created" || internal.status == "processing")
