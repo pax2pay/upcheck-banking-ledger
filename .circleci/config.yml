@@ -54,10 +54,10 @@ commands:
     description: "Reads the output file and escapes it for Slack JSON"
     steps:
       - run: 
-          name: Format Log for Slack
+          name: Slack ctrf
           when: on_fail
           command: | 
-            npx slack-ctrf failed ./vitest-ctrf/report.json
+            npx slack-ctrf failed ./vitest-ctrf/report.json --channel-id ${SLACK_DEFAULT_CHANNEL} --oauth-token ${SLACK_ACCESS_TOKEN}
       - run:
           name: Format Log for Slack
           when: on_fail
