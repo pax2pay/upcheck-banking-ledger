@@ -69,6 +69,7 @@ commands:
                 console.log({tests});
                 tests.forEach(o => {
                   (o.failureMessages = o.failureMessages.map(m => m.slice(0, m.indexOf("\n    at"))));
+                  !o.failureMessages.length && delete o.failureMessages;
                   delete o.ancestorTitles;
                   delete o.fullName;
                   delete o.meta;
@@ -121,8 +122,8 @@ commands:
                 {
                   "type": "section",
                   "text": {
-                    "type": "mrkdwn",
-                    "text": "```json\n${SLACK_LOG_OUTPUT}\n```"
+                    "type": "plain_text",
+                    "text": "${SLACK_LOG_OUTPUT}"
                   }
                 }
               ]
