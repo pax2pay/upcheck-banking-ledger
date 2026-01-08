@@ -61,9 +61,8 @@ commands:
               const fs = require("fs");
               const util = require("util");
               try {
-                const log = fs.readFileSync("workspace/output", "utf8");
-                const sliced = log.slice(log.indexOf(`{"`));
-                const parsed = JSON.parse(sliced)
+                const log = fs.readFileSync("./json-report.json", "utf8");
+                const parsed = JSON.parse(log)
                 console.log({parsed});
                 const tests = parsed.testResults[0].assertionResults
                 console.log({tests});
