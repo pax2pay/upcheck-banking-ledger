@@ -9,6 +9,7 @@ export default defineConfig({
 		isolate: false,
 		exclude: ["node_modules", "dist"],
 		server: { deps: { inline: true } },
-		reporters: ["json"],
+		reporters: ["json", "default"],
+		outputFile: { json: "./json-report.json" },
 	},
 })
