@@ -7,12 +7,17 @@ let ledger: Ledger | undefined
 let transactions: Record<"internal" | "paxgiro" | "clearbank", any>
 describe("pax2pay Ledger", () => {
 	beforeAll(async () => {
+		console.log("pax2pay Ledger.beforeAll started")
+		const start = performance.now()
 		ledger = await Ledger.open()
+		const ledgerOpenTime = performance.now()
+		console.log("pax2pay Ledger.beforeAll.Ledger.Open took: ", ledgerOpenTime - start)
 		transactions = await Promise.all([
 			ledger?.createInternal(),
 			ledger?.createPaxgiro(),
 			ledger?.clearbankHealth(),
 		]).then(t => ({ internal: t[0], paxgiro: t[1], clearbank: t[2] }))
+		console.log("pax2pay Ledger.beforeAll await transactions took: ", performance.now() - ledgerOpenTime)
 	})
 	it("create internal", async () => {
 		const internal = transactions.internal
