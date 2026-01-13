@@ -78,7 +78,7 @@ commands:
                 console.log({escapedLog});
                 fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_OUTPUT="${escapedLog}"`);
                 const workspaceOutput = fs.readFileSync("workspace/output", "utf8");
-                workspaceOutput.includes("Error: Test timed out") && fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_TIMEOUT="⏳ Timed Out"\n`);
+                workspaceOutput.includes(" timed out in") && fs.appendFileSync(process.env.BASH_ENV, `export SLACK_LOG_TIMEOUT="⏳ Timed Out"\n`);
               } catch (e) {
                 console.error("Failed to format log:", e);
               }
