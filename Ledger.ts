@@ -1,7 +1,6 @@
 import { gracely } from "gracely"
 import { isoly } from "isoly"
 import { pax2pay } from "@pax2pay/model-banking"
-import { http } from "cloudly-http"
 import * as dotenv from "dotenv"
 
 dotenv.config()
@@ -21,16 +20,6 @@ export class Ledger {
 			))
 	}
 	constructor(public client?: pax2pay.Client) {}
-	async clearbankHealth() {
-		const response = await http.fetch({
-			method: "GET",
-			url: "https://banking.pax2pay.app/service/clearbank/signer/health",
-			header: { realm: "uk" },
-		})
-		const body = await response.body
-		console.log("clearbankHealth finished.")
-		return { response, body }
-	}
 	async createPaxgiro() {
 		let type: pax2pay.Rail.Address.Type = "paxgiro" as const
 		const accounts = await this.accounts
