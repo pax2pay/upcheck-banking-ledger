@@ -13,7 +13,7 @@ export class Ledger {
 	get accounts(): Promise<pax2pay.Account[] | undefined> | undefined {
 		return (this.#accounts ??= this.client?.accounts
 			.list()
-			.then(r =>
+			.then((r: any) =>
 				Array.isArray(r) && r.length >= 2
 					? r.filter(e => e.id == "HyKIx45x" || e.id == "wIJxbBFE")
 					: (console.log(r), undefined)
