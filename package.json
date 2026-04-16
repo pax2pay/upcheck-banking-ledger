@@ -27,21 +27,24 @@
 		"clean": "rimraf dist node_modules coverage"
 	},
 	"devDependencies": {
-		"@types/node": "^24.5.2",
-		"@typescript-eslint/eslint-plugin": "8.44.1",
-		"@typescript-eslint/parser": "8.44.1",
-		"eslint": "^8.57.0",
-		"eslint-plugin-prettierx": "github:utily/eslint-plugin-prettierx#utily-20231004",
-		"eslint-plugin-simple-import-sort": "^12.1.1",
-		"prettierx": "github:utily/prettierx#utily-20231004",
-		"rimraf": "^6.0.1",
-		"vitest": "3.2.4",
-		"typescript": "^5.7.2"
+		"@eslint/eslintrc": "^3.3.5",
+		"@eslint/js": "^10.0.1",
+		"@types/node": "^25.6.0",
+		"@typescript-eslint/eslint-plugin": "8.58.2",
+		"@typescript-eslint/parser": "8.58.2",
+		"eslint": "^10.2.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-prettier": "^5.5.5",
+		"eslint-plugin-simple-import-sort": "^13.0.0",
+		"prettier": "3.8.3",
+		"rimraf": "^6.1.3",
+		"typescript": "^5.9.3",
+		"vitest": "3.2.4"
 	},
 	"dependencies": {
-		"@pax2pay/model-banking": "0.1.558",
+		"@pax2pay/model-banking": "0.1.608",
 		"cloudly-http": "0.2.0-alpha.24",
-		"dotenv": "^16.4.5",
+		"dotenv": "^17.4.2",
 		"gracely": "^2.0.11",
 		"isoly": "3.0.6"
 	}

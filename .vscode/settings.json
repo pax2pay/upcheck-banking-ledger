@@ -20,8 +20,7 @@
 	},
 	"eslint.format.enable": true,
 	"eslint.lintTask.enable": true,
-	"javascript.format.enable": false,
-	"typescript.format.enable": false,
+	"js/ts.format.enabled": false,
 	"cSpell.words": [
 		"authly",
 		"clearbank",

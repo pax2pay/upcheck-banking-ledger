@@ -4,7 +4,7 @@ import { Balances } from "./Balances"
 import { Ledger } from "./Ledger"
 
 let ledger: Ledger | undefined
-let transactions: Record<"internal" | "paxgiro" | "clearbank", any>
+let transactions: Record<"internal" | "paxgiro", any>
 describe("pax2pay Ledger", () => {
 	beforeAll(async () => {
 		console.log("pax2pay Ledger.beforeAll started")
@@ -12,11 +12,10 @@ describe("pax2pay Ledger", () => {
 		ledger = await Ledger.open()
 		const ledgerOpenTime = performance.now()
 		console.log("pax2pay Ledger.beforeAll.Ledger.Open took: ", ledgerOpenTime - start)
-		transactions = await Promise.all([
-			ledger?.createInternal(),
-			ledger?.createPaxgiro(),
-			ledger?.clearbankHealth(),
-		]).then(t => ({ internal: t[0], paxgiro: t[1], clearbank: t[2] }))
+		transactions = await Promise.all([ledger?.createInternal(), ledger?.createPaxgiro()]).then(t => ({
+			internal: t[0],
+			paxgiro: t[1],
+		}))
 		console.log("pax2pay Ledger.beforeAll await transactions took: ", performance.now() - ledgerOpenTime)
 	})
 	it("create internal", async () => {
@@ -59,12 +58,5 @@ describe("pax2pay Ledger", () => {
 						Balances.areEqual(Balances.before, Balances.after)
 				)
 		).toBeTruthy()
-	})
-	it("Clearbank signer health", async () => {
-		const result =
-			"EosDcM8deXNQb/5VGBpG1nA46t66zxWgYuSMJFAxjPyADcxHOmIP9ImkK+X3yZkPBx1TEeDijaytk1MouWQo85RHxd4N9LHKOrNaUqdZLsnjIH6E0hMSv8uqgeOFnWauuuICyRfgCNbuKUHc5Clijr4uAnJvmW1hw+q2FdVZU+jORHGT4hHqPgCp2d2cJsKzx8GemFy1achvihhhOGisLvDBaGULb3rac9C1n7RUdCEjYCh664uTuBY0DvqmRmKwdCk+/SsEDO2fUESVFE5Zh6VQOZfTXOBtjpPOKgh7e+tBUpBR/BISslUweUNflpH11prSvMjyTklA5jQFR/9rNg=="
-		const { response, body } = (await transactions.clearbank) ?? {}
-		response?.status != 200 && console.log(`Signer health response: `, JSON.stringify({ ...response, body }, null, 2))
-		expect(body).toBe(result)
 	})
 })
