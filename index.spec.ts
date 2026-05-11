@@ -27,8 +27,9 @@ describe("pax2pay Ledger", () => {
 			console.log(
 				"internal: ",
 				JSON.stringify(internal, null, 2),
-				"flaw: ",
-				JSON.stringify(pax2pay.Transaction.type.flaw(internal), null, 2)
+				...(typeof internal === "object" && "posted" in internal
+					? ["flaw: ", JSON.stringify(pax2pay.Transaction.type.flaw(internal), null, 2)]
+					: [])
 			)
 		expect(is).toBeTruthy()
 	})
@@ -41,8 +42,9 @@ describe("pax2pay Ledger", () => {
 			console.log(
 				"paxgiro: ",
 				JSON.stringify(paxgiro, null, 2),
-				"flaw: ",
-				JSON.stringify(pax2pay.Transaction.type.flaw(paxgiro), null, 2)
+				...(typeof paxgiro === "object" && "posted" in paxgiro
+					? ["flaw: ", JSON.stringify(pax2pay.Transaction.type.flaw(paxgiro), null, 2)]
+					: [])
 			)
 		expect(is).toBeTruthy()
 	})
