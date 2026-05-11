@@ -42,7 +42,7 @@
 		"vitest": "3.2.4"
 	},
 	"dependencies": {
-		"@pax2pay/model-banking": "0.1.608",
+		"@pax2pay/model-banking": "0.1.624",
 		"dotenv": "^17.4.2",
 		"gracely": "^2.0.11",
 		"isoly": "3.0.6"
