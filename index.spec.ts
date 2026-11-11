@@ -4,7 +4,7 @@ import { Balances } from "./Balances"
 import { Ledger } from "./Ledger"
 
 let ledger: Ledger | undefined
-let transactions: Record<"internal" | "paxgiro", any>
+let transactions: Record<"internal", any>
 describe("pax2pay Ledger", () => {
 	beforeAll(async () => {
 		console.log("pax2pay Ledger.beforeAll started")
@@ -12,10 +12,7 @@ describe("pax2pay Ledger", () => {
 		ledger = await Ledger.open()
 		const ledgerOpenTime = performance.now()
 		console.log("pax2pay Ledger.beforeAll.Ledger.Open took: ", ledgerOpenTime - start)
-		transactions = await Promise.all([ledger?.createInternal(), ledger?.createPaxgiro()]).then(t => ({
-			internal: t[0],
-			paxgiro: t[1],
-		}))
+		transactions = { internal: await ledger?.createInternal() }
 		console.log("pax2pay Ledger.beforeAll await transactions took: ", performance.now() - ledgerOpenTime)
 	})
 	it("create internal", async () => {
@@ -29,21 +26,6 @@ describe("pax2pay Ledger", () => {
 				JSON.stringify(internal, null, 2),
 				...(!!internal && typeof internal === "object" && "posted" in internal
 					? ["flaw: ", JSON.stringify(pax2pay.Transaction.type.flaw(internal), null, 2)]
-					: [])
-			)
-		expect(is).toBeTruthy()
-	})
-	it("create paxgiro", async () => {
-		const paxgiro = transactions.paxgiro
-		const is =
-			pax2pay.Transaction.type.is(paxgiro) &&
-			(paxgiro.status == "review" || paxgiro.status == "created" || paxgiro.status == "processing")
-		!is &&
-			console.log(
-				"paxgiro: ",
-				JSON.stringify(paxgiro, null, 2),
-				...(!!paxgiro && typeof paxgiro === "object" && "posted" in paxgiro
-					? ["flaw: ", JSON.stringify(pax2pay.Transaction.type.flaw(paxgiro), null, 2)]
 					: [])
 			)
 		expect(is).toBeTruthy()

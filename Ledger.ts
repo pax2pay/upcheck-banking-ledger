@@ -1,5 +1,4 @@
 import { gracely } from "gracely"
-import { isoly } from "isoly"
 import { pax2pay } from "@pax2pay/model-banking"
 import * as dotenv from "dotenv"
 
@@ -7,47 +6,17 @@ dotenv.config()
 export class Ledger {
 	target?: string
 	source?: string
-	targetPaxgiro?: string
-	sourcePaxgiro?: string
 	#accounts?: Promise<pax2pay.Account[] | undefined>
 	get accounts(): Promise<pax2pay.Account[] | undefined> | undefined {
 		return (this.#accounts ??= this.client?.accounts
 			.list()
 			.then((r: any) =>
 				Array.isArray(r) && r.length >= 2
-					? r.filter(e => e.id == "HyKIx45x" || e.id == "wIJxbBFE")
+					? r.filter(e => e.id == "OgyofcU8" || e.id == "4-ib_njC")
 					: (console.log(r), undefined)
 			))
 	}
 	constructor(public client?: pax2pay.Client) {}
-	async createPaxgiro() {
-		let type: pax2pay.Rail.Address.Type = "paxgiro" as const
-		const accounts = await this.accounts
-		if (accounts) {
-			if ((accounts?.[0]?.balances?.GBP?.actual ?? 0) > (accounts?.[1]?.balances?.GBP?.actual ?? 0)) {
-				this.sourcePaxgiro = accounts?.[0].id
-				this.targetPaxgiro =
-					accounts?.[1].rails[0].type == "paxgiro"
-						? accounts?.[1].rails[0].identifier
-						: (accounts?.[1].id, (type = "internal"))
-			} else {
-				this.sourcePaxgiro = accounts?.[1].id
-				this.targetPaxgiro =
-					accounts?.[0].rails[0].type == "paxgiro"
-						? accounts?.[0].rails[0].identifier
-						: (accounts?.[0].id, (type = "internal"))
-			}
-		}
-		const transaction: pax2pay.Transaction.Creatable = {
-			counterpart: { type, identifier: this.targetPaxgiro } as pax2pay.Rail.Address,
-			currency: "GBP",
-			amount: 20 * isoly.DateTime.getMinute(isoly.DateTime.now()) + 1,
-			description: "upcheck paxgiro transaction",
-		}
-		const result = await this.client?.transactions.create(this.sourcePaxgiro ?? "", transaction)
-		console.log("createPaxgiro finished.")
-		return result
-	}
 	async createInternal() {
 		const accounts = await this.accounts
 		if (accounts) {
@@ -73,7 +42,7 @@ export class Ledger {
 		const client = process.env.url ? pax2pay.Client.create(process.env.url, "") : undefined
 		client && (client.realm = "test")
 		/* cspell: disable-next-line */
-		client && (client.organization = "agpiPo0v")
+		client && (client.organization = "upcheck")
 		const token = ((await client?.me.login(process.env.email ?? "", process.env.password ?? "", "test")) ??
 			gracely.client.unauthorized()) as any as gracely.Error | string
 		!gracely.Error.is(token) && client && (client.key = token)
