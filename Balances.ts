@@ -2,10 +2,6 @@ import { isoly } from "isoly"
 import { pax2pay } from "@pax2pay/model-banking"
 
 export namespace Balances {
-	// eslint-disable-next-line prefer-const
-	export let before: Partial<Record<isoly.Currency, number>> = {}
-	// eslint-disable-next-line prefer-const
-	export let after: Partial<Record<isoly.Currency, number>> = {}
 	export function getActual(balances: pax2pay.Balances): Partial<Record<isoly.Currency, number>> {
 		return Object.fromEntries(
 			Object.entries(balances)
@@ -45,5 +41,18 @@ export namespace Balances {
 		return ([...new Set([...Object.keys(balance1), ...Object.keys(balance2)]).values()] as isoly.Currency[]).every(
 			currency => balance1[currency] == balance2[currency]
 		)
+	}
+	// Until an internal transfer settles it is reserved outgoing on the sender and reserved incoming on the
+	// receiver, so counting incoming reservations as held keeps the total unchanged across the transfer.
+	export function getHeld(balances: pax2pay.Balances): Partial<Record<isoly.Currency, number>> {
+		return Object.fromEntries(
+			Object.entries(balances).map(([currency, balance]) => [
+				currency,
+				isoly.Currency.subtract(currency as isoly.Currency, balance.actual ?? 0, balance.outgoingReserved ?? 0),
+			])
+		)
+	}
+	export function total(accounts: pax2pay.Account[]): Partial<Record<isoly.Currency, number>> {
+		return Balances.add(Balances.getHeld(accounts[0].balances), Balances.getHeld(accounts[1].balances))
 	}
 }

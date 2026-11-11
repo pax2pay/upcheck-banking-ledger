@@ -13,13 +13,13 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
+            - v2-npm-{{ checksum "package-lock.json" }}
+            - v2-npm-
+      - run: npm ci --ignore-scripts
       - save_cache:
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - ~/.npm
+          key: v2-npm-{{ checksum "package-lock.json" }}
 
   test-pax2pay-banking-ledger-api:
     description: "Pax2pay banking ledger API tests"
