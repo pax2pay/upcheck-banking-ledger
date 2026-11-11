@@ -1,5 +1,4 @@
 import { gracely } from "gracely"
-import { isoly } from "isoly"
 import { pax2pay } from "@pax2pay/model-banking"
 import * as dotenv from "dotenv"
 
@@ -7,45 +6,45 @@ dotenv.config()
 export class Ledger {
 	target?: string
 	source?: string
-	targetPaxgiro?: string
-	sourcePaxgiro?: string
+	creditorIban: pax2pay.Rail.Address.Iban = {
+		type: "iban",
+		/* cspell: disable-next-line */
+		iban: "GB33BUKB20201555555555",
+		holder: "Upcheck Mock Creditor Ltd",
+	}
+	debtorAccount?: string
+	ibanAmount = 0.01
 	#accounts?: Promise<pax2pay.Account[] | undefined>
 	get accounts(): Promise<pax2pay.Account[] | undefined> | undefined {
-		return (this.#accounts ??= this.client?.accounts
+		return (this.#accounts ??= this.fetchAccounts())
+	}
+	fetchAccounts(): Promise<pax2pay.Account[] | undefined> | undefined {
+		return this.client?.accounts
 			.list()
 			.then((r: any) =>
 				Array.isArray(r) && r.length >= 2
-					? r.filter(e => e.id == "HyKIx45x" || e.id == "wIJxbBFE")
+					? r.filter(e => e.id == "OgyofcU8" || e.id == "4-ib_njC")
 					: (console.log(r), undefined)
-			))
+			)
 	}
 	constructor(public client?: pax2pay.Client) {}
-	async createPaxgiro() {
-		let type: pax2pay.Rail.Address.Type = "paxgiro" as const
+	async createIban() {
 		const accounts = await this.accounts
 		if (accounts) {
-			if ((accounts?.[0]?.balances?.GBP?.actual ?? 0) > (accounts?.[1]?.balances?.GBP?.actual ?? 0)) {
-				this.sourcePaxgiro = accounts?.[0].id
-				this.targetPaxgiro =
-					accounts?.[1].rails[0].type == "paxgiro"
-						? accounts?.[1].rails[0].identifier
-						: (accounts?.[1].id, (type = "internal"))
+			if ((accounts[0]?.balances?.GBP?.actual ?? 0) > (accounts[1]?.balances?.GBP?.actual ?? 0)) {
+				this.debtorAccount = accounts[0].id
 			} else {
-				this.sourcePaxgiro = accounts?.[1].id
-				this.targetPaxgiro =
-					accounts?.[0].rails[0].type == "paxgiro"
-						? accounts?.[0].rails[0].identifier
-						: (accounts?.[0].id, (type = "internal"))
+				this.debtorAccount = accounts[1].id
 			}
 		}
 		const transaction: pax2pay.Transaction.Creatable = {
-			counterpart: { type, identifier: this.targetPaxgiro } as pax2pay.Rail.Address,
+			counterpart: this.creditorIban,
 			currency: "GBP",
-			amount: 20 * isoly.DateTime.getMinute(isoly.DateTime.now()) + 1,
-			description: "upcheck paxgiro transaction",
+			amount: this.ibanAmount,
+			description: "upcheck iban transaction",
 		}
-		const result = await this.client?.transactions.create(this.sourcePaxgiro ?? "", transaction)
-		console.log("createPaxgiro finished.")
+		const result = await this.client?.transactions.create(this.debtorAccount ?? "", transaction)
+		console.log("createIban finished.")
 		return result
 	}
 	async createInternal() {
@@ -73,7 +72,7 @@ export class Ledger {
 		const client = process.env.url ? pax2pay.Client.create(process.env.url, "") : undefined
 		client && (client.realm = "test")
 		/* cspell: disable-next-line */
-		client && (client.organization = "agpiPo0v")
+		client && (client.organization = "upcheck")
 		const token = ((await client?.me.login(process.env.email ?? "", process.env.password ?? "", "test")) ??
 			gracely.client.unauthorized()) as any as gracely.Error | string
 		!gracely.Error.is(token) && client && (client.key = token)
