@@ -68,7 +68,6 @@ export class Ledger {
 		console.log("createInternal finished.")
 		return result
 	}
-	// Logs in on legacy (url) and transacts on targetUrl, which defaults to legacy; set it to sandbox to switch.
 	static async open(): Promise<Ledger> {
 		const login = process.env.loginUrl ? pax2pay.Client.create(process.env.loginUrl, "") : undefined
 		const token = ((await login?.me.login(process.env.email ?? "", process.env.password ?? "", "test")) ??
