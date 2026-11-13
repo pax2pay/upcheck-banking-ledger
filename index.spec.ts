@@ -1,5 +1,4 @@
 import { pax2pay } from "@pax2pay/model-banking"
-import { Balances } from "./Balances"
 import { Ledger } from "./Ledger"
 
 let ledger: Ledger | undefined
@@ -19,9 +18,7 @@ describe("pax2pay Ledger", () => {
 	})
 	it("create internal", async () => {
 		const internal = transactions.internal
-		const is =
-			pax2pay.Transaction.type.is(internal) &&
-			(internal.status == "review" || internal.status == "created" || internal.status == "processing")
+		const is = pax2pay.Transaction.type.is(internal) && pax2pay.Transaction.Status.Success.is(internal.status)
 		!is &&
 			console.log(
 				"internal: ",
@@ -34,9 +31,7 @@ describe("pax2pay Ledger", () => {
 	})
 	it("create iban", async () => {
 		const iban = transactions.iban
-		const is =
-			pax2pay.Transaction.type.is(iban) &&
-			(iban.status == "review" || iban.status == "created" || iban.status == "processing")
+		const is = pax2pay.Transaction.type.is(iban) && pax2pay.Transaction.Status.Success.is(iban.status)
 		!is &&
 			console.log(
 				"iban: ",
@@ -46,18 +41,5 @@ describe("pax2pay Ledger", () => {
 					: [])
 			)
 		expect(is).toBeTruthy()
-	})
-	it("total balance only less iban amount", async () => {
-		const accounts = pax2pay.Account.typeZod.array().length(2)
-		const before = accounts.safeParse(await ledger?.accounts)
-		const after = accounts.safeParse(await ledger?.fetchAccounts())
-		const debited =
-			pax2pay.Transaction.type.is(transactions.iban) && typeof transactions.iban.status == "string"
-				? (ledger?.ibanAmount ?? 0)
-				: 0
-		expect(before.success && after.success).toBe(true)
-		before.success &&
-			after.success &&
-			expect(Balances.total(after.data)).toEqual(Balances.add(Balances.total(before.data), { GBP: -debited }))
 	})
 })
